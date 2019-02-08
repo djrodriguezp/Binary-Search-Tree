@@ -24,19 +24,19 @@ void BSTPrint(struct bst * bst)
 {
 }
 
-void BSTFreeNodes(struct node * currentNode)
+void DisposeBTS(struct node * currentNode)
 {
 	if(currentNode != NULL)
 	{
 		 if(currentNode->left != NULL)
 		 {
-			 BSTFreeNodes(currentNode->left);
+			 DisposeBTS(currentNode->left);
 			 currentNode->left = NULL;
 		 }
 		 
 		 if(currentNode->right != NULL)
 		 {
-			 BSTFreeNodes(currentNode->right);
+			 DisposeBTS(currentNode->right);
 			 currentNode->right = NULL;
 		 }
 		 
@@ -45,6 +45,61 @@ void BSTFreeNodes(struct node * currentNode)
 			 free(currentNode);
 		 }
 	}
+}
+
+struct node * BSTLowestNode(struct node * currentNode)
+{
+	if(currentNode->left == NULL)
+		return currentNode;
+	else
+		return  BSTLowestNode(currentNode->left);
+}
+
+
+struct node * BSTDelete(struct node * currentNode, int data)
+{
+	if (currentNode != NULL)
+	{
+		if(data == currentNode->data) 
+		{
+			if(currentNode->left == NULL && currentNode->right == NULL)//es nodo hoja
+			{
+				free(currentNode);
+				return NULL;
+			}
+			else if(currentNode->left != NULL && currentNode->right != NULL) //el nodo tiene referencia a 2 nodos
+			{
+				struct node * lowestNode = BSTLowestNode(currentNode->right);
+				currentNode->data = lowestNode->data;
+				currentNode->right = BSTDelete(currentNode->right,lowestNode->data);
+			}
+			else
+			{ 
+				struct node * childNode = NULL;
+				if(currentNode->left != NULL)
+				{
+					childNode = currentNode->left;
+					free(currentNode);
+					return childNode;
+				}
+				else
+				{
+					childNode = currentNode->right;
+					free(currentNode);
+				}
+				return childNode;
+			}
+		}
+		else if(data < currentNode->data)
+		{
+			currentNode->left = BSTDelete(currentNode->left, data);
+		}
+		else if(data > currentNode->data)
+		{
+			currentNode->right = BSTDelete(currentNode->right, data);
+		}
+	}
+	return currentNode;
 }
 
 struct node * BSTSearch(struct node * currentNode, int data)
@@ -66,7 +121,6 @@ struct node * BSTSearch(struct node * currentNode, int data)
 	}
 	return NULL;
 }
-
 
 
 struct node * BSTInsert(struct node * currentNode, int data)
@@ -92,13 +146,21 @@ int main()
 
 		struct bst *bst = (struct bst *) malloc(sizeof(struct bst));
 		bst->root = NULL;
-		bst->root = BSTInsert(bst->root, 8);  //inicializamos el nodo raiz
-		BSTInsert(bst->root, 12);
-		BSTInsert(bst->root, 10);
-		BSTInsert(bst->root, 9);
-		BSTInsert(bst->root, 6);
-		BSTInsert(bst->root, 7);
-		BSTInsert(bst->root, 4);
+		bst->root = BSTInsert(bst->root, 50);  //inicializamos el nodo raiz
+		BSTInsert(bst->root, 30);
+		BSTInsert(bst->root, 75);
+		BSTInsert(bst->root, 35);
+		BSTInsert(bst->root, 25);
+		BSTInsert(bst->root, 33);
+		BSTInsert(bst->root, 40);
+		BSTInsert(bst->root, 39);
+		BSTInsert(bst->root, 45);
+		BSTInsert(bst->root, 70);
+		BSTInsert(bst->root, 60);
+		BSTInsert(bst->root, 85);
+		BSTInsert(bst->root, 70);
+		BSTInsert(bst->root, 90);
+		BSTInsert(bst->root, 80);
 	
 	  struct node * node = BSTSearch(bst->root, 5);
 	  if( node != NULL)
@@ -120,8 +182,11 @@ int main()
 			printf("Nodo no encontrado\n");
 		}
 		
+		BSTDelete(bst->root, 25);
+		BSTDelete(bst->root, 70);
+		BSTDelete(bst->root, 35);
 		//liberamos la memoria alocada dinamicamente por el bst
-		BSTFreeNodes(bst->root);
+		DisposeBTS(bst->root);
 		free(bst);
 	return 0;
 }
