@@ -158,7 +158,6 @@ int main()
 		BSTInsert(bst->root, 70);
 		BSTInsert(bst->root, 60);
 		BSTInsert(bst->root, 85);
-		BSTInsert(bst->root, 70);
 		BSTInsert(bst->root, 90);
 		BSTInsert(bst->root, 80);
 	
@@ -172,7 +171,7 @@ int main()
 			printf("Nodo no encontrado\n");
 		}
 		
-		node = BSTSearch(bst->root, 10);
+		node = BSTSearch(bst->root, 70);
 		if( node != NULL)
 		{
 			printf("Nodo encontrado: %d\n",node->data);
@@ -185,6 +184,7 @@ int main()
 		BSTDelete(bst->root, 25);
 		BSTDelete(bst->root, 70);
 		BSTDelete(bst->root, 35);
+		
 		//liberamos la memoria alocada dinamicamente por el bst
 		DisposeBTS(bst->root);
 		free(bst);
